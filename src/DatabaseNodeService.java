@@ -138,17 +138,11 @@ public class DatabaseNodeService {
         }
     }
 
-    public void getCpuUsage(){
-        //command: sar -u 1 5
-    }
 
     public void getMemoryUsage(){
         //command:  sar -r 1 5
     }
 
-    public void getDiskUsage() {
-        //command: df --total | grep total | awk 'END {print $5}'
-    }
 
     public void addInactiveReadNode(DatabaseNode node){
         inactiveReadNodes.push(node);
@@ -202,7 +196,11 @@ public class DatabaseNodeService {
                 p = run.exec(cmds);
                 p.getErrorStream();
                 p.waitFor();
-
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//                String line = "";
+//                while ((line = reader.readLine()) != null) {
+//                    System.out.println(line);
+//                }
                 node.setAdminState(DatabaseNode.AdminState.DRAIN);
                 addInactiveReadNode(node);
             } catch (IOException | InterruptedException e) {
@@ -223,7 +221,7 @@ public class DatabaseNodeService {
             System.out.println("No database node to activate");
         }
         else {
-            String cmd = "echo 'set server " + node.getConnectionName() + "/" + node.getServerName() + " state ready'" +
+            String cmd = "echo 'set server " + node.getConnectionName().trim() + "/" + node.getServerName().trim() + " state ready'" +
                     " | sudo socat stdio /var/run/haproxy.socket";
             String[] cmds = {"/bin/bash", "-c", cmd};
 
@@ -231,7 +229,11 @@ public class DatabaseNodeService {
                 p = run.exec(cmds);
                 p.getErrorStream();
                 p.waitFor();
-
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//                String line = "";
+//                while ((line = reader.readLine()) != null) {
+//                    System.out.println(line);
+//                }
                 node.setAdminState(DatabaseNode.AdminState.ACTIVE);
                 addActiveReadNode(node);
             } catch (IOException | InterruptedException e) {

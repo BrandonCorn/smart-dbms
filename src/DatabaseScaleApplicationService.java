@@ -4,10 +4,12 @@ import java.util.Scanner;
 public class DatabaseScaleApplicationService {
     private QueryService queryService;
     private DatabaseNodeService dbNodeService;
+    private ModelPredictor predictor;
 
     public DatabaseScaleApplicationService() {
         queryService = new QueryService();
         dbNodeService = new DatabaseNodeService();
+        predictor = new ModelPredictor();
         dbNodeService.setNodes();
     }
 
@@ -16,6 +18,8 @@ public class DatabaseScaleApplicationService {
         Scanner sc = new Scanner(System.in);
         int input;
         boolean showCommands = true;
+        predictor.getPredictionStats();
+        predictor.makePredictions();
         try {
             while (showCommands) {
                 System.out.println("Choose an option: \n1. Show server state \n2. Turn off node " +
